@@ -29,7 +29,7 @@ export default function BookingForm() {
     setSubmitted(false);
 
     try {
-      const response = await fetch("/API/appointments", {
+      const response = await fetch("/api/appointments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

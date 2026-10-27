@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import MeasurementGuide from "@/components/measurementGuide";
 
 const measurementGroups = [
   {
@@ -33,8 +34,6 @@ const measurementGroups = [
       ["elbow", "Elbow circumference"],
       ["sleeve", "Sleeve length"],
       ["wrist", "Wrist circumference"],
-      ["upperArm", "Upper arm / bicep"],
-      ["armhole", "Armhole circumference"],
     ],
   },
   {
@@ -62,10 +61,6 @@ const measurementGroups = [
       ["calf", "Calf circumference"],
       ["ankle", "Ankle circumference"],
       ["trouserLength", "Full trouser length"],
-      ["crotchDepth", "Crotch depth"],
-      ["frontRise", "Front rise"],
-      ["backRise", "Back rise"],
-      ["trouserLength", "Full trouser length"],
     ],
   },
   {
@@ -75,8 +70,6 @@ const measurementGroups = [
       ["dressLength", "Full dress length"],
       ["skirtLength", "Skirt length"],
       ["shoulderToFloor", "Shoulder to floor"],
-      ["dressLength", "Full dress length"],
-      ["waistToHem", "Waist to hem"],
     ],
   },
 ] as const;
@@ -364,6 +357,7 @@ export default function RemoteTailoringForm() {
               measurement check before production.
             </p>
           </div>
+          <MeasurementGuide />
           {measurementGroups.map((group) => {
             const visibleFields = group.fields.filter(([name]) =>
               garmentMeasurements[garment]?.includes(name),
