@@ -178,7 +178,7 @@ export default function Home() {
         <p>
           Explore our world of refined tailoring and individual expression.
         </p>
-        <a href="#services" className="button button-outline">
+        <a href="/collection" className="button button-outline">
           Explore the Collections ↗
         </a>
       </section>
