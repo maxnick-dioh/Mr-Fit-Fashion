@@ -1187,3 +1187,271 @@ header {
     font-size: 12px;
   }
 }
+
+.measurement-diagram-container {
+  margin: 30px 0;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e8dfd0;
+  border-radius: 8px;
+}
+
+.measurement-diagram-container h4 {
+  color: var(--navy);
+  font-family: Georgia, serif;
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.measurement-diagram-container p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.measurement-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+@media (max-width: 600px) {
+  .measurement-diagram-container {
+    padding: 12px;
+  }
+}
+
+.interactive-guide {
+  padding: 35px;
+  background: #f8f6f1;
+  border: 1px solid #e8dfd0;
+  border-radius: 10px;
+}
+
+.interactive-guide-heading {
+  margin-bottom: 25px;
+}
+
+.interactive-guide-heading h3 {
+  color: var(--navy);
+  font-family: Georgia, serif;
+  font-size: 30px;
+}
+
+.interactive-guide-heading p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.interactive-guide-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.8fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.human-diagram {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.human-diagram > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.diagram-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 34px;
+  height: 34px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0004;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.diagram-marker:hover,
+.diagram-marker.active {
+  background: var(--gold);
+  color: var(--navy);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.measurement-detail {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e8dfd0;
+  border-radius: 8px;
+}
+
+.measurement-number {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.measurement-detail h4 {
+  margin: 10px 0;
+  color: var(--navy);
+  font-family: Georgia, serif;
+  font-size: 25px;
+}
+
+.measurement-instruction,
+.measurement-tip p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.measurement-tip {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f1df;
+  border-left: 3px solid var(--gold);
+}
+
+.measurement-tip strong {
+  color: var(--navy);
+}
+
+.measurement-value-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.measurement-value-label input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dedbd4;
+  border-radius: 4px;
+}
+
+.measurement-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 12px;
+}
+
+.measurement-navigation button {
+  padding: 10px 14px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  background: var(--navy);
+  color: #fff;
+  cursor: pointer;
+}
+
+.measurement-navigation button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.measurement-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.measurement-selector button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid #dedbd4;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.measurement-selector button.selected {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.measurement-selector button span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+}
+
+@media (max-width: 760px) {
+  .interactive-guide {
+    padding: 16px;
+  }
+
+  .interactive-guide-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .measurement-detail {
+    padding: 18px;
+  }
+
+  .diagram-marker {
+    width: 27px;
+    height: 27px;
+    font-size: 12px;
+  }
+}
+
+.measurement-closeup {
+  width: 100%;
+  margin: 18px 0;
+  overflow: hidden;
+  border: 1px solid #e8dfd0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.measurement-closeup-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.measurement-image-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  margin: 18px 0;
+  padding: 20px;
+  background: #f8f6f1;
+  border: 1px dashed #c5a15b;
+  color: #777;
+  text-align: center;
+  font-size: 13px;
+}

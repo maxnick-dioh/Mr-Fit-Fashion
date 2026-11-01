@@ -9,43 +9,37 @@ const services = [
     number: "01",
     title: "Bespoke Suits",
     description: "Sharp tailoring for business, weddings and special occasions.",
-    image:
-      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=700&q=85",
+    image:"/images/image2.jpg",
   },
   {
     number: "02",
     title: "Native Wear",
     description: "African heritage reimagined with contemporary elegance.",
-    image:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=85",
+    image:"/images/image3.jpg",
   },
   {
     number: "03",
     title: "Senator Styles",
     description: "Refined traditional outfits with a distinctive presence.",
-    image:
-      "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=700&q=85",
+    image:"/images/image4.jpg",
   },
   {
     number: "04",
     title: "English Wear",
     description: "Modern, versatile clothing designed around your style.",
-    image:
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=700&q=85",
+    image:"/images/image5.jpg",
   },
   {
     number: "05",
     title: "Children's Wear",
     description: "Comfortable, stylish outfits for life's special moments.",
-    image:
-      "https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&w=700&q=85",
+    image:"/images/image6.jpg",
   },
   {
     number: "06",
     title: "Wardrobe Consulting",
     description: "Personal styling to build a wardrobe that works for you.",
-    image:
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=700&q=85",
+    image:"/images/image7.jpg",
   },
 ];
 
@@ -54,8 +48,8 @@ export default function Home() {
     <main>
       <header className="navbar">
         <a href="#" className="brand">
-          <span className="brand-mark">M</span>
-          <span className="brand-name">MAXNICK COUTURE</span>
+          <span className="brand-mark">L</span>
+          <span className="brand-name">LOUISO FITS</span>
           <span className="brand-tagline">STYLE · CLASS · YOU</span>
         </a>
 
@@ -107,8 +101,8 @@ export default function Home() {
 
         <div className="hero-image">
           <img
-            src="https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=1100&q=90"
-            alt="Elegant menswear styling"
+            src="/images/image2.jpg"
+            alt="Elegant menswear styling Bespoke Suits"
           />
           <div className="image-caption">
             <span>THE ART OF</span>
@@ -152,7 +146,7 @@ export default function Home() {
       <section id="about" className="about-section">
         <div className="about-image">
           <img
-            src="https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=1000&q=85"
+            src="/images/image3.jpg"
             alt="Elegant tailored clothing"
           />
         </div>
@@ -193,21 +187,18 @@ export default function Home() {
         <a href="https://wa.me/676111007" className="button button-gold">
           Contact Us on WhatsApp ↗
         </a>
-        <p className="contact-note">
-          Replace the WhatsApp link with your business number before launch.
-        </p>
       </section>
       <Gallery />
       <BookingForm />
       <footer className="footer">
         <a href="#" className="brand">
-          <span className="brand-mark">M</span>
-          <span className="brand-name">MAXNICK COUTURE</span>
+          <span className="brand-mark">L</span>
+          <span className="brand-name">LOUISO COUTURE</span>
           <span className="brand-tagline">STYLE · CLASS · YOU</span>
         </a>
 
         <p>Personal style. Exceptional craftsmanship.</p>
-        <p>© 2025 Maxnick Couture. All rights reserved.</p>
+        <p>© 2025 Louiso Couture. All rights reserved.</p>
       </footer>
     </main>
   );

@@ -119,8 +119,8 @@ export default function CollectionPage() {
     <main className="collection-page">
       <header className="collection-header">
         <a href="/" className="brand-mark" aria-label="Maxnick Couture home">
-          <span>MC</span>
-          <small>MAXNICK COUTURE</small>
+          <span>LF</span>
+          <small>LOUISO COUTURE</small>
         </a>
 
         <nav className="collection-nav">
@@ -208,7 +208,7 @@ export default function CollectionPage() {
             </div>
 
             <div className="quick-details">
-              <p className="product-category">MAXNICK COUTURE / NEW DROP</p>
+              <p className="product-category">LOUISO COUTURE / NEW DROP</p>
               <h2>{selected.name}</h2>
               <p className="quick-price">${selected.price.toFixed(2)}</p>
 

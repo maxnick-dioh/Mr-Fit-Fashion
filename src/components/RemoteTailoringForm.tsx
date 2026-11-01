@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import MeasurementGuide from "@/components/measurementGuide";
+import Image from "next/image";
+import InteractiveMeasurementGuide from "@/components/InteractiveMeasurementGuide";
 
 const measurementGroups = [
   {
@@ -316,48 +317,26 @@ export default function RemoteTailoringForm() {
 
           <h3>3. Your body measurements</h3>
 
-          <div className="measurement-guide">
-            <h4>How to measure yourself</h4>
+          <div className="measurement-diagram-container">
+            <h4>Where to Measure</h4>
 
             <p>
-              Use a soft measuring tape and wear light clothing. Keep the tape
-              level and comfortably snug, not tight. Record every measurement
-              using the unit selected above.
+              Follow the numbered markings on the human body diagrams to
+              identify where each measurement should be taken.
             </p>
 
-            <ul>
-              <li>
-                <strong>Chest or bust:</strong> Measure around the fullest part
-                of your chest or bust.
-              </li>
-              <li>
-                <strong>Waist:</strong> Measure around your natural waist.
-              </li>
-              <li>
-                <strong>Hips:</strong> Measure around the fullest part of your
-                hips and seat.
-              </li>
-              <li>
-                <strong>Shoulders:</strong> Measure from one shoulder point to
-                the other across your back.
-              </li>
-              <li>
-                <strong>Sleeve:</strong> Measure from the shoulder point to your
-                desired sleeve endpoint.
-              </li>
-              <li>
-                <strong>Inseam:</strong> Measure from the crotch to the desired
-                trouser hem.
-              </li>
-            </ul>
-
-            <p>
-              If possible, ask someone to help with shoulder, back, sleeve and
-              trouser measurements. Your designer may request a second
-              measurement check before production.
-            </p>
+            <Image
+              src="/images/body-measurement-guide.jpeg"
+              alt="Male and female body measurement guide showing measuring tape positions"
+              width={1536}
+              height={1024}
+              priority
+              className="measurement-diagram"
+            />
           </div>
-          <MeasurementGuide />
+
+          <InteractiveMeasurementGuide />
+
           {measurementGroups.map((group) => {
             const visibleFields = group.fields.filter(([name]) =>
               garmentMeasurements[garment]?.includes(name),
