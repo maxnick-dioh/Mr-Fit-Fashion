@@ -1,6 +1,6 @@
 import Gallery from "@/components/Gallery";
 import BookingForm from "@/components/BookingForm";
-import RemoteTailoringForm from "@/components/RemoteTailoringForm";
+import Image from "next/image";
 import Link from "next/link";
 
 
@@ -100,9 +100,12 @@ export default function Home() {
         </div>
 
         <div className="hero-image">
-          <img
+          <Image
             src="/images/image2.jpg"
             alt="Elegant menswear styling Bespoke Suits"
+            width={800}
+            height={1000}
+            unoptimized
           />
           <div className="image-caption">
             <span>THE ART OF</span>
@@ -127,7 +130,13 @@ export default function Home() {
           {services.map((service) => (
             <article className="service-card" key={service.number}>
               <div className="service-image">
-                <img src={service.image} alt={service.title} />
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  width={800}
+                  height={1000}
+                  unoptimized
+                />
                 <span className="service-number">{service.number}</span>
               </div>
 
@@ -145,9 +154,12 @@ export default function Home() {
 
       <section id="about" className="about-section">
         <div className="about-image">
-          <img
+          <Image
             src="/images/image3.jpg"
             alt="Elegant tailored clothing"
+            width={800}
+            height={1000}
+            unoptimized
           />
         </div>
 
@@ -179,10 +191,10 @@ export default function Home() {
 
       <section id="contact" className="contact-section">
         <p className="eyebrow">YOUR STYLE JOURNEY STARTS HERE</p>
-        <h2>Let's Create Something Exceptional.</h2>
+        <h2>Let&apos;s Create Something Exceptional.</h2>
         <p>
           Have an event, a special outfit in mind, or need help refining your
-          wardrobe? Let's talk about your vision.
+          wardrobe? Let&apos;s talk about your vision.
         </p>
         <a href="https://wa.me/676111007" className="button button-gold">
           Contact Us on WhatsApp ↗

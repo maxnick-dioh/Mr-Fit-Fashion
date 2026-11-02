@@ -98,6 +98,7 @@ export default function InteractiveMeasurementGuide() {
   const [selected, setSelected] = useState(3);
   const [unit, setUnit] = useState("cm");
   const [values, setValues] = useState<Record<number, string>>({});
+  const [errors, setErrors] = useState<Record<number, string>>({});
 
   const activeMeasurement =
     measurements.find((item) => item.id === selected)!;
@@ -109,8 +110,96 @@ export default function InteractiveMeasurementGuide() {
     }));
   }
 
+  function validateMeasurement(id: number) {
+  const rawValue = values[id]?.trim();
+
+  if (!rawValue) {
+    setErrors((previous) => ({
+      ...previous,
+      [id]: "Please enter this measurement.",
+    }));
+    return false;
+  }
+
+  const numberValue = Number(rawValue);
+  const maximum = unit === "cm" ? 300 : 120;
+
+  if (
+    !Number.isFinite(numberValue) ||
+    numberValue <= 0 ||
+    numberValue > maximum
+  ) {
+    setErrors((previous) => ({
+      ...previous,
+      [id]: `Enter a valid measurement between 0 and ${maximum} ${unit}.`,
+    }));
+    return false;
+  }
+
+  setErrors((previous) => {
+    const updated = { ...previous };
+    delete updated[id];
+    return updated;
+  });
+
+  return true;
+}
+
+function handleNext() {
+  if (!validateMeasurement(selected)) return;
+
+  if (selected < measurements.length) {
+    setSelected((previous) => previous + 1);
+  }
+}
+
   return (
     <section className="interactive-guide">
+      <div className="measurement-unit-selector">
+  <span>Measurement unit:</span>
+
+  <button
+    type="button"
+    className={unit === "cm" ? "selected" : ""}
+    onClick={() => {
+      if (unit !== "cm") {
+        setValues((previous) =>
+          Object.fromEntries(
+            Object.entries(previous).map(([id, value]) => [
+              id,
+              value ? (Number(value) * 2.54).toFixed(1) : "",
+            ])
+          )
+        );
+        setUnit("cm");
+        setErrors({});
+      }
+    }}
+  >
+    Centimeters (cm)
+  </button>
+
+  <button
+    type="button"
+    className={unit === "in" ? "selected" : ""}
+    onClick={() => {
+      if (unit !== "in") {
+        setValues((previous) =>
+          Object.fromEntries(
+            Object.entries(previous).map(([id, value]) => [
+              id,
+              value ? (Number(value) / 2.54).toFixed(1) : "",
+            ])
+          )
+        );
+        setUnit("in");
+        setErrors({});
+      }
+    }}
+  >
+    Inches (in)
+  </button>
+</div>
       <div className="interactive-guide-heading">
         <p className="eyebrow">YOUR PERSONAL FITTING GUIDE</p>
         <h3>Learn Where to Measure</h3>
@@ -185,19 +274,35 @@ export default function InteractiveMeasurementGuide() {
           </div>
 
           <label className="measurement-value-label">
-            Your measurement ({unit})
-            <input
-              type="number"
-              min="0"
-              max="300"
-              step="0.1"
-              value={values[selected] ?? ""}
-              onChange={(event) =>
-                updateMeasurement(event.target.value)
-              }
-              placeholder={`Enter ${activeMeasurement.name.toLowerCase()}`}
-            />
-          </label>
+  Your measurement ({unit})
+
+  <input
+    type="number"
+    min="0.1"
+    max={unit === "cm" ? 300 : 120}
+    step="0.1"
+    value={values[selected] ?? ""}
+    onChange={(event) => {
+      updateMeasurement(event.target.value);
+      setErrors((previous) => ({
+        ...previous,
+        [selected]: "",
+      }));
+    }}
+    onBlur={() => {
+      if (values[selected]) {
+        validateMeasurement(selected);
+      }
+    }}
+    placeholder="Enter your measurement"
+  />
+
+  {errors[selected] && (
+    <span className="measurement-error">
+      {errors[selected]}
+    </span>
+  )}
+</label>
 
           <div className="measurement-navigation">
             <button
@@ -213,7 +318,7 @@ export default function InteractiveMeasurementGuide() {
             <button
               type="button"
               disabled={selected === measurements.length}
-              onClick={() => setSelected((value) => value + 1)}
+              onClick={handleNext}
             >
               Next
             </button>

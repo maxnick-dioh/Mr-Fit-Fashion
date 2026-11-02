@@ -1455,3 +1455,287 @@ header {
   text-align: center;
   font-size: 13px;
 }
+
+.measurement-unit-selector {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.measurement-unit-selector span {
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.measurement-unit-selector button {
+  padding: 9px 14px;
+  border: 1px solid #d8c9a8;
+  border-radius: 4px;
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.measurement-unit-selector button.selected {
+  background: var(--navy);
+  color: #fff;
+}
+
+.measurement-error {
+  color: #c62828;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.measurement-value-label input:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.collection-nav button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.collection-nav button:hover {
+  color: #b78a42;
+}
+
+.collection-search {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 18px 5%;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.collection-search input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  outline-color: #b78a42;
+}
+
+.collection-search button {
+  padding: 12px 18px;
+  background: #17253d;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.collection-filter {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.collection-filter button {
+  padding: 9px 17px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+}
+
+.collection-filter button:hover {
+  background: #17253d;
+  color: #fff;
+}
+
+.product-count,
+.empty-products {
+  text-align: center;
+  color: #777;
+  font-size: 13px;
+  margin: 15px 0;
+}
+
+@media (max-width: 600px) {
+  .collection-nav {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .collection-search {
+    padding: 12px;
+  }
+}
+
+.cart-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.cart-drawer {
+  display: flex;
+  flex-direction: column;
+  width: min(460px, 100%);
+  height: 100%;
+  padding: 25px;
+  overflow-y: auto;
+  background: #fff;
+  color: #17253d;
+  box-shadow: -5px 0 25px #0002;
+}
+
+.cart-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8e5df;
+}
+
+.cart-heading p {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #a17b3c;
+}
+
+.cart-heading h2 {
+  margin-top: 6px;
+  font-family: Georgia, serif;
+  font-size: 25px;
+}
+
+.cart-heading > button {
+  border: none;
+  background: transparent;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.empty-cart {
+  margin: auto;
+  text-align: center;
+  color: #777;
+}
+
+.empty-cart button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #17253d;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.cart-items {
+  flex: 1;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 85px minmax(0, 1fr) auto;
+  gap: 13px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e8e5df;
+}
+
+.cart-product-art {
+  display: grid;
+  place-items: center;
+  min-height: 110px;
+}
+
+.cart-product-art .garment-art {
+  width: 75px;
+  height: 100px;
+}
+
+.cart-item-details h3 {
+  font-size: 14px;
+}
+
+.cart-item-details p {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #777;
+}
+
+.cart-item > strong {
+  font-size: 13px;
+}
+
+.cart-quantity {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 12px;
+}
+
+.cart-quantity button {
+  width: 27px;
+  height: 27px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+}
+
+.remove-cart-item {
+  margin-top: 10px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #a33;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cart-summary {
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.cart-summary > div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 17px;
+}
+
+.cart-summary p {
+  margin: 12px 0;
+  color: #777;
+  font-size: 12px;
+}
+
+.cart-summary button {
+  width: 100%;
+  padding: 15px;
+  background: #17253d;
+  color: #fff;
+  border: none;
+}
+
+.cart-summary button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .cart-drawer {
+    padding: 18px;
+  }
+
+  .cart-item {
+    grid-template-columns: 65px minmax(0, 1fr);
+  }
+
+  .cart-item > strong {
+    grid-column: 2;
+  }
+}

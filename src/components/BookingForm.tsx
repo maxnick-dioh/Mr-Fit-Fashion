@@ -7,6 +7,7 @@ export default function BookingForm() {
   const [minDate, setMinDate] = useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMinDate(new Date().toISOString().split("T")[0]);
   }, []);
 
@@ -60,10 +61,10 @@ export default function BookingForm() {
     <section id="contact" className="contact-section">
       <p className="eyebrow">YOUR STYLE JOURNEY STARTS HERE</p>
 
-      <h2>Let's Create Something Exceptional.</h2>
+      <h2>Let&apos;s Create Something Exceptional.</h2>
 
       <p className="booking-intro">
-        Tell us what you have in mind. We'll review your request and contact you
+        Tell us what you have in mind. We&apos;ll review your request and contact you
         to discuss your fitting or consultation.
       </p>
 
@@ -135,7 +136,7 @@ export default function BookingForm() {
               <option value="Native Wear">Native Wear</option>
               <option value="Senator Styles">Senator Styles</option>
               <option value="English Wear">English Wear</option>
-              <option value="Children's Wear">Children's Wear</option>
+              <option value="Children&apos;s Wear">Children&apos;s Wear</option>
               <option value="Wardrobe Consulting">Wardrobe Consulting</option>
             </select>
           </div>

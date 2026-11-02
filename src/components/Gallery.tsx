@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const galleryItems = [
   {
     title: "The Classic Suit",
@@ -53,7 +55,14 @@ export default function Gallery() {
         {galleryItems.map((item) => (
           <article className="gallery-card" key={item.category}>
             <div className="gallery-card-image">
-              <img src={item.image} alt={item.title} loading="lazy" />
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={800}
+                height={1000}
+                loading="lazy"
+                unoptimized
+              />
 
               <span className="gallery-category">
                 {item.category}
