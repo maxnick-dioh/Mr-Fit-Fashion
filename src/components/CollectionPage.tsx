@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Product = {
   id: number;
@@ -17,6 +17,7 @@ type CartItem = {
   size: string;
   quantity: number;
 };
+const CART_STORAGE_KEY = "maxnick_couture_cart_v1";
 
 const products: Product[] = [
   { id: 1, name: "Essential Jacket", price: 199, color: "#17253d", type: "jacket", isNew: false },
@@ -123,11 +124,41 @@ export default function CollectionPage() {
   const [view, setView] = useState<"front" | "back">("front");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [cartLoaded, setCartLoaded] = useState(false);
   const [message, setMessage] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => {
+  try {
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
 
+    if (savedCart) {
+      const parsedCart: unknown = JSON.parse(savedCart);
+
+      if (Array.isArray(parsedCart)) {
+        setCart(parsedCart as CartItem[]);
+      }
+    }
+  } catch (error) {
+    console.error("Could not load saved cart:", error);
+  } finally {
+    setCartLoaded(true);
+  }
+}, []);
+
+useEffect(() => {
+  if (!cartLoaded) return;
+
+  try {
+    localStorage.setItem(
+      CART_STORAGE_KEY,
+      JSON.stringify(cart)
+    );
+  } catch (error) {
+    console.error("Could not save cart:", error);
+  }
+}, [cart, cartLoaded]);
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const cartSubtotal = cart.reduce(
     (total, item) => total + item.product.price * item.quantity,
