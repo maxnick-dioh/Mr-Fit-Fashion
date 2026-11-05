@@ -1,9 +1,7 @@
 "use client";
-
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import InteractiveMeasurementGuide from "@/components/InteractiveMeasurementGuide";
-
 const measurementGroups = [
   {
     title: "General measurements",
@@ -198,59 +196,56 @@ export default function RemoteTailoringForm() {
   const [error, setError] = useState("");
   const [garment, setGarment] = useState("Suit");
   const [referenceFiles, setReferenceFiles] = useState<File[]>([]);
-const [uploadError, setUploadError] = useState("");
+  const [uploadError, setUploadError] = useState("");
+  const [preferredColor, setPreferredColor] = useState("#17253d");
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
-const [preferredColor, setPreferredColor] = useState("#17253d");
+  useEffect(() => {
+    const urls = referenceFiles.map((file) => URL.createObjectURL(file));
 
-const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+    setPreviewUrls(urls);
 
-useEffect(() => {
-  const urls = referenceFiles.map((file) =>
-    URL.createObjectURL(file)
-  );
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [referenceFiles]);
 
-  setPreviewUrls(urls);
+  function handleReferenceUpload(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const files = Array.from(event.target.files ?? []);
 
-  return () => {
-    urls.forEach((url) => URL.revokeObjectURL(url));
-  };
-}, [referenceFiles]);
+    if (files.length + referenceFiles.length > 5) {
+      setUploadError("You can upload a maximum of 5 reference images.");
+      event.target.value = "";
+      return;
+    }
 
-function handleReferenceUpload(
-  event: React.ChangeEvent<HTMLInputElement>
-) {
-  const files = Array.from(event.target.files ?? []);
-
-  if (files.length + referenceFiles.length > 5) {
-    setUploadError("You can upload a maximum of 5 reference images.");
-    event.target.value = "";
-    return;
-  }
-
-  const invalidFile = files.find(
-    (file) =>
-      !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
-      file.size > 5 * 1024 * 1024
-  );
-
-  if (invalidFile) {
-    setUploadError(
-      "Use JPG, PNG or WEBP images. Each image must be 5 MB or smaller."
+    const invalidFile = files.find(
+      (file) =>
+        !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
+        file.size > 5 * 1024 * 1024,
     );
+
+    if (invalidFile) {
+      setUploadError(
+        "Use JPG, PNG or WEBP images. Each image must be 5 MB or smaller.",
+      );
+      event.target.value = "";
+      return;
+    }
+
+    setReferenceFiles((previous) => [...previous, ...files]);
+    setUploadError("");
     event.target.value = "";
-    return;
   }
 
-  setReferenceFiles((previous) => [...previous, ...files]);
-  setUploadError("");
-  event.target.value = "";
-}
+  function removeReference(index: number) {
+    setReferenceFiles((previous) =>
+      previous.filter((_, fileIndex) => fileIndex !== index),
+    );
+  }
 
-function removeReference(index: number) {
-  setReferenceFiles((previous) =>
-    previous.filter((_, fileIndex) => fileIndex !== index)
-  );
-}
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -375,135 +370,129 @@ function removeReference(index: number) {
 
           <h3>3. Your design references</h3>
 
-<div className="design-reference-section">
+          <div className="design-reference-section">
+            <p>
+              Upload pictures of the outfit you want us to create. You can
+              provide up to five reference images.
+            </p>
 
-  <p>
-    Upload pictures of the outfit you want us to create.
-    You can provide up to five reference images.
-  </p>
+            <label className="reference-upload">
+              <span className="upload-icon">+</span>
+              <strong>Upload design photos</strong>
+              <small>JPG, PNG or WEBP — Maximum 5 MB each</small>
 
-  <label className="reference-upload">
-    <span className="upload-icon">+</span>
-    <strong>Upload design photos</strong>
-    <small>JPG, PNG or WEBP — Maximum 5 MB each</small>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={handleReferenceUpload}
+              />
+            </label>
 
-    <input
-      type="file"
-      accept="image/jpeg,image/png,image/webp"
-      multiple
-      onChange={handleReferenceUpload}
-    />
-  </label>
+            {uploadError && (
+              <p className="remote-error" role="alert">
+                {uploadError}
+              </p>
+            )}
 
-  {uploadError && (
-    <p className="remote-error" role="alert">
-      {uploadError}
-    </p>
-  )}
+            <div className="reference-preview-grid">
+              {previewUrls.map((url, index) => (
+                <div className="reference-preview" key={url}>
+                  <img src={url} alt={`Design reference ${index + 1}`} />
 
-  <div className="reference-preview-grid">
-    {previewUrls.map((url, index) => (
-      <div className="reference-preview" key={url}>
-        <img src={url} alt={`Design reference ${index + 1}`} />
+                  <button
+                    type="button"
+                    onClick={() => removeReference(index)}
+                    aria-label={`Remove reference image ${index + 1}`}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
 
-        <button
-          type="button"
-          onClick={() => removeReference(index)}
-          aria-label={`Remove reference image ${index + 1}`}
-        >
-          ×
-        </button>
-      </div>
-    ))}
-  </div>
+            <p className="reference-count">
+              {referenceFiles.length}/5 reference images selected
+            </p>
+          </div>
 
-  <p className="reference-count">
-    {referenceFiles.length}/5 reference images selected
-  </p>
+          <h3>4. Colour preferences</h3>
 
-</div>
+          <div className="remote-grid">
+            <label className="remote-field">
+              Choose your preferred colour
 
-<h3>4. Colour preferences</h3>
+              <input
+                type="color"
+                name="preferredColor"
+                value={preferredColor}
+                onChange={(event) => setPreferredColor(event.target.value)}
+              />
+            </label>
 
-<div className="remote-grid">
+            <label className="remote-field">
+              Custom colour name
+              <input
+                name="customColorName"
+                placeholder="e.g. Royal blue, wine red, cream"
+                maxLength={60}
+              />
+            </label>
 
-  <label className="remote-field">
-    Choose your preferred colour
+            <label className="remote-field">
+              Custom HEX colour code
+              <input
+                name="customHexColor"
+                placeholder="#17253D"
+                pattern="^#[0-9A-Fa-f]{6}$"
+                title="Enter a valid six-digit HEX colour, such as #17253D"
+              />
+            </label>
+          </div>
 
-    <input
-      type="color"
-      name="preferredColor"
-      value={preferredColor}
-      onChange={(event) => setPreferredColor(event.target.value)}
-    />
-  </label>
+          <h3>5. Fabric and design preferences</h3>
 
-  <label className="remote-field">
-    Custom colour name
-    <input
-      name="customColorName"
-      placeholder="e.g. Royal blue, wine red, cream"
-      maxLength={60}
-    />
-  </label>
+          <div className="remote-grid">
+            <label className="remote-field">
+              Preferred fabric
 
-  <label className="remote-field">
-    Custom HEX colour code
-    <input
-      name="customHexColor"
-      placeholder="#17253D"
-      pattern="^#[0-9A-Fa-f]{6}$"
-      title="Enter a valid six-digit HEX colour, such as #17253D"
-    />
-  </label>
+              <select name="fabric" defaultValue="">
+                <option value="">Choose fabric</option>
+                <option value="Cotton">Cotton</option>
+                <option value="Wool">Wool</option>
+                <option value="Linen">Linen</option>
+                <option value="Silk">Silk</option>
+                <option value="Velvet">Velvet</option>
+                <option value="Polyester">Polyester</option>
+                <option value="Not sure">Let the designer recommend</option>
+              </select>
+            </label>
 
-</div>
+            <label className="remote-field">
+              Preferred pattern
 
-<h3>5. Fabric and design preferences</h3>
+              <select name="pattern" defaultValue="">
+                <option value="">Choose pattern</option>
+                <option value="Plain">Plain</option>
+                <option value="Striped">Striped</option>
+                <option value="Checked">Checked</option>
+                <option value="Floral">Floral</option>
+                <option value="Traditional">Traditional</option>
+                <option value="Custom">Custom pattern</option>
+              </select>
+            </label>
 
-<div className="remote-grid">
+            <label className="remote-field remote-full">
+              Additional design instructions
 
-  <label className="remote-field">
-    Preferred fabric
-
-    <select name="fabric" defaultValue="">
-      <option value="">Choose fabric</option>
-      <option value="Cotton">Cotton</option>
-      <option value="Wool">Wool</option>
-      <option value="Linen">Linen</option>
-      <option value="Silk">Silk</option>
-      <option value="Velvet">Velvet</option>
-      <option value="Polyester">Polyester</option>
-      <option value="Not sure">Let the designer recommend</option>
-    </select>
-  </label>
-
-  <label className="remote-field">
-    Preferred pattern
-
-    <select name="pattern" defaultValue="">
-      <option value="">Choose pattern</option>
-      <option value="Plain">Plain</option>
-      <option value="Striped">Striped</option>
-      <option value="Checked">Checked</option>
-      <option value="Floral">Floral</option>
-      <option value="Traditional">Traditional</option>
-      <option value="Custom">Custom pattern</option>
-    </select>
-  </label>
-
-  <label className="remote-field remote-full">
-    Additional design instructions
-
-    <textarea
-      name="designInstructions"
-      rows={5}
-      maxLength={2000}
-      placeholder="Describe the exact style, collar, buttons, embroidery, fitting, fabric texture and other details you want..."
-    />
-  </label>
-
-</div>
+              <textarea
+                name="designInstructions"
+                rows={5}
+                maxLength={2000}
+                placeholder="Describe the exact style, collar, buttons, embroidery, fitting, fabric texture and other details you want..."
+              />
+            </label>
+          </div>
 
           <h3>3. Your body measurements</h3>
 
