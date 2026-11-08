@@ -81,91 +81,145 @@ export async function reserveStock(orderItemId: string) {
   });
 }
 
-export async function releaseReservedStock(orderItemId: string) {
-  if (!orderItemId) {
-    throw new Error("Order item ID is required.");
+export async function cancelOrder(
+  orderId: string,
+  reason?: string
+) {
+  if (!orderId) {
+    throw new Error("Order ID is required.");
   }
 
   return prisma.$transaction(async (tx) => {
-    const item = await tx.orderItem.findUnique({
-      where: { id: orderItemId },
+    const order = await tx.order.findUnique({
+      where: { id: orderId },
       include: {
-        order: {
-          include: {
-            payments: {
-              where: { status: "SUCCEEDED" },
-            },
-          },
+        items: true,
+        payments: {
+          where: { status: "SUCCEEDED" },
         },
       },
     });
 
-    if (!item) {
-      throw new Error("Order item not found.");
-    }
-
-    if (item.order.status !== "CANCELLED") {
-      throw new Error("Only cancelled orders can release stock.");
-    }
-
-    if (item.order.payments.length > 0) {
-      throw new Error(
-        "This order has a successful payment. Use the paid-order fulfillment workflow."
-      );
-    }
-
-    if (!item.variantId) {
-      throw new Error("This order item has no stock variant.");
-    }
-
-    const releaseKey = `release:${item.id}`;
-    const reserveKey = `reserve:${item.id}`;
-
-    const existingRelease = await tx.stockMovement.findUnique({
-      where: { idempotencyKey: releaseKey },
-    });
-
-    if (existingRelease) {
-      return { success: true, alreadyReleased: true };
-    }
-
-    const reservation = await tx.stockMovement.findUnique({
-      where: { idempotencyKey: reserveKey },
-    });
-
-    if (!reservation || reservation.type !== "RESERVED") {
-      throw new Error("No valid stock reservation was found.");
+    if (!order) {
+      throw new Error("Order not found.");
     }
 
     if (
-      reservation.variantId !== item.variantId ||
-      reservation.quantity !== item.quantity
+      order.status !== "PENDING" &&
+      order.status !== "CONFIRMED" &&
+      order.status !== "CANCELLED"
     ) {
-      throw new Error("Stock reservation does not match this order item.");
+      throw new Error(
+        "This order can no longer be cancelled."
+      );
     }
 
-    const updated = await tx.$executeRaw`
-      UPDATE "ProductVariant"
-      SET "reservedStock" = "reservedStock" - ${item.quantity}
-      WHERE "id" = ${item.variantId}
-      AND "reservedStock" >= ${item.quantity}
-    `;
-
-    if (updated !== 1) {
-      throw new Error("Unable to release reserved stock safely.");
+    if (order.payments.length > 0) {
+      throw new Error(
+        "This order has a successful payment. Use the refund workflow."
+      );
     }
 
-    await tx.stockMovement.create({
-      data: {
-        variantId: item.variantId,
-        orderItemId: item.id,
-        type: "RELEASED",
-        quantity: item.quantity,
-        reason: "Cancelled order stock release",
-        idempotencyKey: releaseKey,
-      },
-    });
+    const productionStarted = order.items.some((item) =>
+      ["CUTTING", "SEWING", "FITTING", "QUALITY_CHECK", "COMPLETED"].includes(
+        item.productionStatus
+      )
+    );
 
-    return { success: true, alreadyReleased: false };
+    if (productionStarted) {
+      throw new Error(
+        "This order cannot be cancelled because production has started."
+      );
+    }
+
+    const alreadyCancelled = order.status === "CANCELLED";
+
+    if (!alreadyCancelled) {
+      await tx.order.update({
+        where: { id: orderId },
+        data: {
+          status: "CANCELLED",
+          cancelledAt: new Date(),
+          cancellationReason: reason ?? "Customer requested cancellation",
+        },
+      });
+    }
+
+    for (const item of order.items) {
+      // Custom-tailored items without inventory variants are skipped.
+      if (!item.variantId) {
+        continue;
+      }
+
+      const releaseKey = `release:${item.id}`;
+      const reserveKey = `reserve:${item.id}`;
+
+      const existingRelease = await tx.stockMovement.findUnique({
+        where: { idempotencyKey: releaseKey },
+      });
+
+      if (existingRelease) {
+        if (
+          existingRelease.type !== "RELEASED" ||
+          existingRelease.variantId !== item.variantId ||
+          existingRelease.quantity !== item.quantity
+        ) {
+          throw new Error("Conflicting stock release record.");
+        }
+
+        continue;
+      }
+
+      const reservation = await tx.stockMovement.findUnique({
+        where: { idempotencyKey: reserveKey },
+      });
+
+      if (!reservation || reservation.type !== "RESERVED") {
+        throw new Error(
+          `No valid stock reservation found for order item ${item.id}.`
+        );
+      }
+
+      if (
+        reservation.variantId !== item.variantId ||
+        reservation.quantity !== item.quantity
+      ) {
+        throw new Error(
+          "Stock reservation does not match the order item."
+        );
+      }
+
+      const updated = await tx.$executeRaw`
+        UPDATE "ProductVariant"
+        SET "reservedStock" = "reservedStock" - ${item.quantity}
+        WHERE "id" = ${item.variantId}
+        AND "reservedStock" >= ${item.quantity}
+      `;
+
+      if (updated !== 1) {
+        throw new Error(
+          "Unable to release reserved stock safely."
+        );
+      }
+
+      await tx.stockMovement.create({
+        data: {
+          variantId: item.variantId,
+          orderItemId: item.id,
+          type: "RELEASED",
+          quantity: item.quantity,
+          reason: "Cancelled order stock release",
+          idempotencyKey: releaseKey,
+        },
+      });
+    }
+
+    return {
+      success: true,
+      alreadyCancelled,
+      message: alreadyCancelled
+        ? "Order was already cancelled. Stock release was checked."
+        : "Order cancelled and reserved stock released successfully.",
+    };
   });
 }
