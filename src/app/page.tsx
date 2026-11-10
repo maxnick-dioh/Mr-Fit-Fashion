@@ -1,5 +1,6 @@
 import Gallery from "@/components/Gallery";
 import BookingForm from "@/components/BookingForm";
+import HomeNavbar from "@/components/HomeNavbar";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -46,25 +47,7 @@ const services = [
 export default function Home() {
   return (
     <main>
-      <header className="navbar">
-        <a href="#" className="brand">
-          <span className="brand-mark">L</span>
-          <span className="brand-name">LOUISO FITS</span>
-          <span className="brand-tagline">STYLE · CLASS · YOU</span>
-        </a>
-
-        <nav className="nav-links">
-          <a href="#">Home</a>
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#gallery">Gallery</a>
-          <a href="#contact">Contact</a>
-        </nav>
-
-        <a href="#contact" className="button button-gold nav-cta">
-          Book a Consultation
-        </a>
-      </header>
+      <HomeNavbar />
 
       <section className="hero">
         <div className="hero-content">
