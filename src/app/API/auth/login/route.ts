@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { assertAuthConfigured, setSessionCookie, verifyPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkLoginRateLimit } from "@/lib/rate-limits";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -29,6 +30,26 @@ export async function POST(request: Request) {
 
   try {
     assertAuthConfigured();
+
+    const rateLimit = await checkLoginRateLimit(request, email);
+
+    if (!rateLimit.success) {
+      const retryAfter = Math.max(1, Math.ceil((rateLimit.reset - Date.now()) / 1000));
+
+      return NextResponse.json(
+        {
+          message: "Too many login attempts. Please try again later.",
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(retryAfter),
+            "X-RateLimit-Remaining": String(rateLimit.remaining),
+          },
+        },
+      );
+    }
+
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
@@ -36,8 +57,8 @@ export async function POST(request: Request) {
         fullName: true,
         email: true,
         phone: true,
-        role: true,
         passwordHash: true,
+        role: true,
         sessionVersion: true,
       },
     });
@@ -56,6 +77,7 @@ export async function POST(request: Request) {
       phone: user.phone,
       role: user.role,
     };
+
     return setSessionCookie(
       NextResponse.json({ user: safeUser }),
       user.id,
