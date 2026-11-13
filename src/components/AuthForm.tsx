@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type AuthFormProps = {
   mode: "login" | "register";
@@ -23,20 +23,35 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     const formData = new FormData(event.currentTarget);
     const payload = {
-      fullName: formData.get("fullName"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      password: formData.get("password"),
+      fullName: formData.get("fullName")?.toString().trim() ?? "",
+      email: formData.get("email")?.toString().trim() ?? "",
+      phone: formData.get("phone")?.toString().trim() ?? "",
+      password: formData.get("password")?.toString() ?? "",
     };
 
     try {
-      /*
-      const response = await fetch(`/api/auth/${mode.trim().toLowerCase()}`, {
+      const endpoint = `/api/auth/${mode.toLowerCase()}`;
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const result: { message?: string } = await response.json();
+
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Non-JSON response:", response.status, text);
+        setError(`Server error (${response.status}). Check console for details.`);
+        return;
+      }
+
+      let result: { message?: string };
+      try {
+        result = await response.json();
+      } catch {
+        setError("The server returned an invalid response.");
+        return;
+      }
 
       if (!response.ok) {
         setError(result.message || "Unable to continue. Please try again.");
@@ -55,28 +70,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       setError("Unable to connect. Please try again.");
     } finally {
       setIsSubmitting(false);
-    } */
-
-    const endpoint = `/api/auth/${mode.trim().toLowerCase()}`;
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      const text = await response.text();
-      console.error("Non-JSON response:", response.status, text);
-      setError(`Server error (${response.status}). Check console for details.`);
-    return;
-  } 
-
-  const result: { message?: string } = await response.json();
- 
-  if (!response.ok) {
-    setError(result.message || "Unable to continue. Please try again.");
-    return;
+    }
   }
 
   return (
@@ -100,6 +94,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </label>
         </>
       )}
+
       <label className="auth-field">
         Email address
         <input
@@ -110,6 +105,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           required
         />
       </label>
+
       <label className="auth-field">
         Password
         <input
