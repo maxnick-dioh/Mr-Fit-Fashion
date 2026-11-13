@@ -1,34 +1,55 @@
 import { NextResponse } from "next/server";
 import { assertAuthConfigured, hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
+import { isSameOriginRequest } from "@/lib/csrf";
 const registrationResponse = {
   message: "Continue to sign in. If you already have an account, use your existing password.",
 };
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ message: "Invalid origin." }, { status: 403 });
+  }
+
   let body: unknown;
+
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
   }
 
-  if (typeof body !== "object" || body === null) {
-    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
-  }
+  if (
+  typeof body !== "object" ||
+  body === null ||
+  Array.isArray(body)
+) {
+  return NextResponse.json(
+    { message: "Request body must be a JSON object." },
+    { status: 400 }
+  );
+}
 
-  const fullName = "fullName" in body && typeof body.fullName === "string"
-    ? body.fullName.trim()
+const data = body as Record<string, unknown>;
+
+  const fullName =
+  typeof data.fullName === "string"
+    ? data.fullName.trim()
     : "";
-  const email = "email" in body && typeof body.email === "string"
-    ? body.email.trim().toLowerCase()
+
+const email =
+  typeof data.email === "string"
+    ? data.email.trim().toLowerCase()
     : "";
-  const phone = "phone" in body && typeof body.phone === "string"
-    ? body.phone.trim()
+
+const phone =
+  typeof data.phone === "string" || typeof data.phone === "number"
+    ? String(data.phone).trim()
     : "";
-  const password = "password" in body && typeof body.password === "string"
-    ? body.password
+
+const password =
+  typeof data.password === "string"
+    ? data.password
     : "";
 
   if (

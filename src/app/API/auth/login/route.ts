@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 import { assertAuthConfigured, setSessionCookie, verifyPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkLoginRateLimit } from "@/lib/rate-limits";
+import { isSameOriginRequest } from "@/lib/csrf";
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ message: "Invalid origin." }, { status: 403 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();

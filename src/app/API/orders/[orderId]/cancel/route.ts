@@ -2,12 +2,20 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { cancelOrder } from "@/lib/stock";
+import { isSameOriginRequest } from "@/lib/csrf";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ orderId?: string }> }
 ) {
   try {
+    if (!isSameOriginRequest(request)) {
+      return NextResponse.json(
+        { message: "Forbidden: invalid request origin." },
+        { status: 403 }
+      );
+    }
+
     const user = await getCurrentUser();
 
     if (!user) {

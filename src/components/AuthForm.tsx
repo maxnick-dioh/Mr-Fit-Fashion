@@ -30,7 +30,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
     };
 
     try {
-      const response = await fetch(`/API/auth/${mode}`, {
+      /*
+      const response = await fetch(`/api/auth/${mode.trim().toLowerCase()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -54,7 +55,28 @@ export default function AuthForm({ mode }: AuthFormProps) {
       setError("Unable to connect. Please try again.");
     } finally {
       setIsSubmitting(false);
-    }
+    } */
+
+    const endpoint = `/api/auth/${mode.trim().toLowerCase()}`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      const text = await response.text();
+      console.error("Non-JSON response:", response.status, text);
+      setError(`Server error (${response.status}). Check console for details.`);
+    return;
+  } 
+
+  const result: { message?: string } = await response.json();
+ 
+  if (!response.ok) {
+    setError(result.message || "Unable to continue. Please try again.");
+    return;
   }
 
   return (
