@@ -10,7 +10,7 @@ export default function LogoutButton() {
   async function logout() {
     setError("");
     try {
-      const response = await fetch("/API/auth/logout", { method: "POST" });
+      const response = await fetch("/api/auth/logout", { method: "POST" });
       if (!response.ok) {
         throw new Error("Unable to sign out. Please try again.");
       }
